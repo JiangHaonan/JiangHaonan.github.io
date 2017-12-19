@@ -35,17 +35,17 @@
 <link rel="canonical" href="https://jianghaonan.github.io/2017/12/19/Linux——记录linux下jvm时间与系统时间不一致的解决方案/"/>
 
 
-<meta name="description" content="场景今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。 解决方案 首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。123456#复制上海的时区时间到 当前机器的本地时间配置中[centos@Mm ~]$ sudo cp /usr/sh">
+<meta name="description" content="场景今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。 解决方案 首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。    123456#复制上海的时区时间到 当前机器的本地时间配置中[centos@Mm ~]$ sudo cp /us">
 <meta name="keywords" content="linux,jvm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux——记录linux下jvm时间与系统时间不一致的解决方案">
 <meta property="og:url" content="https://jianghaonan.github.io/2017/12/19/Linux——记录linux下jvm时间与系统时间不一致的解决方案/index.html">
 <meta property="og:site_name" content="Mm">
-<meta property="og:description" content="场景今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。 解决方案 首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。123456#复制上海的时区时间到 当前机器的本地时间配置中[centos@Mm ~]$ sudo cp /usr/sh">
-<meta property="og:updated_time" content="2017-12-19T11:38:28.017Z">
+<meta property="og:description" content="场景今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。 解决方案 首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。    123456#复制上海的时区时间到 当前机器的本地时间配置中[centos@Mm ~]$ sudo cp /us">
+<meta property="og:updated_time" content="2017-12-19T11:39:49.202Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux——记录linux下jvm时间与系统时间不一致的解决方案">
-<meta name="twitter:description" content="场景今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。 解决方案 首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。123456#复制上海的时区时间到 当前机器的本地时间配置中[centos@Mm ~]$ sudo cp /usr/sh">
+<meta name="twitter:description" content="场景今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。 解决方案 首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。    123456#复制上海的时区时间到 当前机器的本地时间配置中[centos@Mm ~]$ sudo cp /us">
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=1.1" />
@@ -133,13 +133,18 @@
             <div class="post-content">
             <script src="/assets/js/APlayer.min.js"> </script><h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。</p>
 <h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><blockquote>
-<p>首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#复制上海的时区时间到 当前机器的本地时间配置中</span></span><br><span class="line">[centos@Mm ~]$ sudo cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span><br><span class="line"><span class="comment">#查看时间是否已经校准</span></span><br><span class="line"><span class="comment">#CST可以同时表示美国，澳大利亚，中国，古巴四个国家的标准时间, 此处代表中国时间</span></span><br><span class="line">[centos@Mm ~]$ date</span><br><span class="line">Tue Dec 19 19:06:40 CST 2017</span><br></pre></td></tr></table></figure></p>
-<p>方案一<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[centos@Mm ~]$ sudo vi /etc/sysconfig/clock </span><br><span class="line"><span class="comment">#添加以下内容</span></span><br><span class="line">ZONE=<span class="string">"Asia/Shanghai"</span></span><br><span class="line">UTC=<span class="literal">false</span></span><br><span class="line">ARC=<span class="literal">false</span></span><br><span class="line"><span class="comment">#保存并退出</span></span><br></pre></td></tr></table></figure></p>
+<p>首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。  </p>
 </blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#复制上海的时区时间到 当前机器的本地时间配置中</span></span><br><span class="line">[centos@Mm ~]$ sudo cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span><br><span class="line"><span class="comment">#查看时间是否已经校准</span></span><br><span class="line"><span class="comment">#CST可以同时表示美国，澳大利亚，中国，古巴四个国家的标准时间, 此处代表中国时间</span></span><br><span class="line">[centos@Mm ~]$ date</span><br><span class="line">Tue Dec 19 19:06:40 CST 2017</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>方案一   </p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[centos@Mm ~]$ sudo vi /etc/sysconfig/clock </span><br><span class="line"><span class="comment">#添加以下内容</span></span><br><span class="line">ZONE=<span class="string">"Asia/Shanghai"</span></span><br><span class="line">UTC=<span class="literal">false</span></span><br><span class="line">ARC=<span class="literal">false</span></span><br><span class="line"><span class="comment">#保存并退出</span></span><br></pre></td></tr></table></figure>
 <p>此时再启动web，发现日志的时间已经正确，这是最简单的方式，使用openjdk的时候测试有效，其他jdk版本如果不行，请再尝试方案二。</p>
 <blockquote>
-<p>方案二<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#进入到下面目录, 目录因Java安装路径而异</span></span><br><span class="line">[centos@Mm ~]$ <span class="built_in">cd</span> ....../Java/jre/lib/zi/Etc</span><br><span class="line"><span class="comment">#将GMT替换为GMT+8</span></span><br><span class="line">[centos@Mm ~]$ mv GMT GMT.bak</span><br><span class="line">[centos@Mm ~]$ mv GMT+8 GMT</span><br><span class="line"><span class="comment">#保险一点的做法，把 UTC和UCT也加上.bak</span></span><br><span class="line">[centos@Mm ~]$ mv UTC UTC.bak</span><br><span class="line">[centos@Mm ~]$ mv UCT UCT.bak</span><br></pre></td></tr></table></figure></p>
+<p>方案二  </p>
 </blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#进入到下面目录, 目录因Java安装路径而异</span></span><br><span class="line">[centos@Mm ~]$ <span class="built_in">cd</span> ....../Java/jre/lib/zi/Etc</span><br><span class="line"><span class="comment">#将GMT替换为GMT+8</span></span><br><span class="line">[centos@Mm ~]$ mv GMT GMT.bak</span><br><span class="line">[centos@Mm ~]$ mv GMT+8 GMT</span><br><span class="line"><span class="comment">#保险一点的做法，把 UTC和UCT也加上.bak</span></span><br><span class="line">[centos@Mm ~]$ mv UTC UTC.bak</span><br><span class="line">[centos@Mm ~]$ mv UCT UCT.bak</span><br></pre></td></tr></table></figure>
 <p>好，再次启动Java，时间正确了。</p>
 <blockquote>
 <p>方案三  </p>
