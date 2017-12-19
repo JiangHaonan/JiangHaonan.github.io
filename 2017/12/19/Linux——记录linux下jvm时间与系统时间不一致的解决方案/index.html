@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="description" content="Linux——记录linux下jvm时间与系统时间不一致的解决方案"/>
+
+
+
+
+  <meta name="keywords" content="linux,jvm," />
+
+
+
+
+
+  <link rel="alternate" href="/default" title="Mm">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=1.1" />
+
+
+
+<link rel="canonical" href="https://jianghaonan.github.io/2017/12/19/Linux——记录linux下jvm时间与系统时间不一致的解决方案/"/>
+
+
+<meta name="description" content="场景今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。 解决方案 首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。123456#复制上海的时区时间到 当前机器的本地时间配置中[centos@Mm ~]$ sudo cp /usr/sh">
+<meta name="keywords" content="linux,jvm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux——记录linux下jvm时间与系统时间不一致的解决方案">
+<meta property="og:url" content="https://jianghaonan.github.io/2017/12/19/Linux——记录linux下jvm时间与系统时间不一致的解决方案/index.html">
+<meta property="og:site_name" content="Mm">
+<meta property="og:description" content="场景今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。 解决方案 首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。123456#复制上海的时区时间到 当前机器的本地时间配置中[centos@Mm ~]$ sudo cp /usr/sh">
+<meta property="og:updated_time" content="2017-12-19T11:34:45.513Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux——记录linux下jvm时间与系统时间不一致的解决方案">
+<meta name="twitter:description" content="场景今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。 解决方案 首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。123456#复制上海的时区时间到 当前机器的本地时间配置中[centos@Mm ~]$ sudo cp /usr/sh">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=1.1" />
+<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet'>
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+
+
+
+
+<script type="text/javascript">
+  var themeConfig = {
+    fancybox: {
+      enable: true
+    },
+  };
+</script>
+
+
+
+
+  
+
+
+
+    <title> Linux——记录linux下jvm时间与系统时间不一致的解决方案 - Mm </title>
+  </head>
+
+  <body>
+    <div id="page">
+      <header id="masthead"><div class="site-header-inner">
+    <h1 class="site-title">
+        <a href="/." class="logo">Mm</a>
+    </h1>
+
+    <nav id="nav-top">
+        
+            <ul id="menu-top" class="nav-top-items">
+                
+                    <li class="menu-item">
+                        <a href="/archives">
+                            
+                            
+                                归档
+                            
+                        </a>
+                    </li>
+                
+                    <li class="menu-item">
+                        <a href="/about">
+                            
+                            
+                                关于我
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        
+  </nav>
+</div>
+
+      </header>
+      <div id="content">
+        
+    <div id="primary">
+        
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Linux——记录linux下jvm时间与系统时间不一致的解决方案
+        
+      </h1>
+
+      <time class="post-time">
+          Dec 19 2017
+      </time>
+    </header>
+
+
+
+    
+            <div class="post-content">
+            <script src="/assets/js/APlayer.min.js"> </script><h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><blockquote>
+<p>首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#复制上海的时区时间到 当前机器的本地时间配置中</span></span><br><span class="line">[centos@Mm ~]$ sudo cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span><br><span class="line"><span class="comment">#查看时间是否已经校准</span></span><br><span class="line"><span class="comment">#CST可以同时表示美国，澳大利亚，中国，古巴四个国家的标准时间, 此处代表中国时间</span></span><br><span class="line">[centos@Mm ~]$ date</span><br><span class="line">Tue Dec 19 19:06:40 CST 2017</span><br></pre></td></tr></table></figure></p>
+<p>方案一<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[centos@Mm ~]$ sudo vi /etc/sysconfig/clock </span><br><span class="line"><span class="comment">#添加以下内容</span></span><br><span class="line">ZONE=<span class="string">"Asia/Shanghai"</span></span><br><span class="line">UTC=<span class="literal">false</span></span><br><span class="line">ARC=<span class="literal">false</span></span><br><span class="line"><span class="comment">#保存并退出</span></span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>此时再启动web，发现日志的时间已经正确，这是最简单的方式，使用openjdk的时候测试有效，其他jdk版本如果不行，请再尝试方案二。</p>
+<blockquote>
+<p>方案二<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#进入到下面目录, 目录因Java安装路径而异</span></span><br><span class="line">[centos@Mm ~]$ <span class="built_in">cd</span> ....../Java/jre/lib/zi/Etc</span><br><span class="line"><span class="comment">#将GMT替换为GMT+8</span></span><br><span class="line">[centos@Mm ~]$ mv GMT GMT.bak</span><br><span class="line">[centos@Mm ~]$ mv GMT+8 GMT</span><br><span class="line"><span class="comment">#保险一点的做法，把 UTC和UCT也加上.bak</span></span><br><span class="line">[centos@Mm ~]$ mv UTC UTC.bak</span><br><span class="line">[centos@Mm ~]$ mv UCT UCT.bak</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>好，再次启动Java，时间正确了。</p>
+<blockquote>
+<p>方案三  </p>
+</blockquote>
+<p>启动项目时加上JVM启动参数<strong>-Duser.timezone=GMT+8</strong><br>例：java -jar -Duser.timezone=GMT+8 web.jar</p>
+<h3 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h3><p>使用方案一与方案二</p>
+
+            </div>
+          
+
+    
+      <footer class="post-footer">
+		
+		<div class="post-tags">
+		  
+			<a href="/tags/linux/">linux</a>
+		  
+			<a href="/tags/jvm/">jvm</a>
+		  
+		</div>
+		
+
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2017/12/18/java并发编程——记录一次FutureTask的使用/">
+        <span class="next-text nav-default">java并发编程——记录一次FutureTask的使用</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+        
+  <div class="comments" id="comments">
+    
+    <div style="text-align:center;">
+        <button class="btn" id="load-disqus" onclick="disqus.load();">加载 Disqus 评论</button>
+    </div>
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+      </footer>
+    
+  </article>
+
+    </div>
+
+      </div>
+
+      <footer id="colophon"><span class="copyright-year">
+    
+        &copy;
+    
+    2017
+    <span class="footer-author">Jianghn.</span>
+    <span class="power-by">
+        Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a> and <a class="theme-link" href="https://github.com/frostfan/hexo-theme-polarbear">Polar Bear</a>
+    </span>
+</span>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+    
+
+<script type="text/javascript">
+  var disqus_shortname = 'JiangHaonan';
+  var disqus_identifier = '2017/12/19/Linux——记录linux下jvm时间与系统时间不一致的解决方案/';
+
+  var disqus_title = "Linux——记录linux下jvm时间与系统时间不一致的解决方案";
+
+
+  var disqus = {
+    load : function disqus(){
+        if(typeof DISQUS !== 'object') {
+          (function () {
+          var s = document.createElement('script'); s.async = true;
+          s.type = 'text/javascript';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+          }());
+          $('#load-disqus').remove(); ///加载后移除按钮
+        }
+    }
+  }
+
+  
+    var disqus_config = function () {
+        this.page.url = disqus_url;
+        this.page.identifier = disqus_identifier;
+        this.page.title = disqus_title;
+    };
+  
+
+</script>
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+    <script type="text/javascript" src="/js/src/theme.js?v=1.1"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=1.1"></script>
+
+  </body>
+</html>
