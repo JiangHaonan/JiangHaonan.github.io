@@ -42,7 +42,7 @@
 <meta property="og:url" content="https://jianghaonan.github.io/2017/12/19/Linux——记录linux下jvm时间与系统时间不一致的解决方案/index.html">
 <meta property="og:site_name" content="Mm">
 <meta property="og:description" content="场景今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。 解决方案 首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。    123456#复制上海的时区时间到 当前机器的本地时间配置中[centos@Mm ~]$ sudo cp /us">
-<meta property="og:updated_time" content="2017-12-19T11:39:49.202Z">
+<meta property="og:updated_time" content="2017-12-27T07:45:42.853Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux——记录linux下jvm时间与系统时间不一致的解决方案">
 <meta name="twitter:description" content="场景今天部署新的测试环境，发现web中有些数据读取不出来，查看了一下方法，是根据当前时间筛选，又看了一下linux下的系统时间与Java日志的时间，发现都不正确。老问题了，这里总结一下使用过的方法。 解决方案 首先要先校对Linux的系统时间，这个是每个解决方案之前都必须做的。    123456#复制上海的时区时间到 当前机器的本地时间配置中[centos@Mm ~]$ sudo cp /us">
@@ -139,7 +139,7 @@
 <blockquote>
 <p>方案一   </p>
 </blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[centos@Mm ~]$ sudo vi /etc/sysconfig/clock </span><br><span class="line"><span class="comment">#添加以下内容</span></span><br><span class="line">ZONE=<span class="string">"Asia/Shanghai"</span></span><br><span class="line">UTC=<span class="literal">false</span></span><br><span class="line">ARC=<span class="literal">false</span></span><br><span class="line"><span class="comment">#保存并退出</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#centos</span></span><br><span class="line">[centos@Mm ~]$ sudo vi /etc/sysconfig/clock </span><br><span class="line"><span class="comment">#添加以下内容</span></span><br><span class="line">ZONE=<span class="string">"Asia/Shanghai"</span></span><br><span class="line">UTC=<span class="literal">false</span></span><br><span class="line">ARC=<span class="literal">false</span></span><br><span class="line"><span class="comment">#如果是ubuntu</span></span><br><span class="line">vi /etc/timezone</span><br><span class="line"><span class="comment">#添加一下内容</span></span><br><span class="line">Asia/Shanghai</span><br><span class="line"><span class="comment">#保存并退出</span></span><br></pre></td></tr></table></figure>
 <p>此时再启动web，发现日志的时间已经正确，这是最简单的方式，使用openjdk的时候测试有效，其他jdk版本如果不行，请再尝试方案二。</p>
 <blockquote>
 <p>方案二  </p>
